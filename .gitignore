@@ -1,0 +1,10 @@
+*.a
+*.o
+*.cmd*
+*.d
+*.S
+.version
+*vmlinux
+System.map
+
+!.config
