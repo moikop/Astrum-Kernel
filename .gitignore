@@ -3,8 +3,17 @@
 *.cmd*
 *.d
 *.S
+*.s
 .version
-*vmlinux
-System.map
+*vmlinux*
+*System.map
+*modules.order
+*.mod.c
+Module.symvers
+*.ko
+initramfs*.cpio
+
+
 
 !.config
+!.config.old
