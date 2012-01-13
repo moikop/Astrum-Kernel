@@ -2,7 +2,7 @@
 # filesystem patcher
 # Copyright SztupY, Licence: GPLv3
 #
-# G3Mod
+# Astrum Kernel
 #
 
 export PATH=/sbin:/system/bin:/system/xbin
