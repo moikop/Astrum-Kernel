@@ -28,7 +28,7 @@ export LC_ALL
 
 if [ -z "$KBUILD_BUILD_VERSION" ]; then
 	if [ -r .version ]; then
-		VERSION=`cat .version`
+		VERSION="Astrum_`cat .version`"
 	else
 		VERSION=0
 		echo 0 > .version
