@@ -37,8 +37,13 @@
 #include <plat/regs-gpio.h>
 #include <mach/apollo.h>
 
+#ifdef CONFIG_SND_VOODOO
+	#include "wm8994_voodoo.h"
+	#include "wm8994.h"
+#else
+	#include "wm8994_def.h"
+#endif
 
-#include "wm8994_def.h"
 #include "wm8994_gain.h"
 
 #include <linux/timer.h>
@@ -121,20 +126,6 @@ static struct {
 static struct timer_list mute_on_timer;
 static struct timer_list fm_input_mute_on_timer;
 
-struct wm8994_priv {
-	u16 reg_cache[WM8994_REGISTER_COUNT];
-	//struct wm8993_platform_data pdata;
-	struct snd_soc_codec codec;
-	int master;
-	int sysclk_source;
-	unsigned int mclk_rate;
-	unsigned int sysclk_rate;
-	unsigned int fs;
-	unsigned int bclk;
-	int class_w_users;
-	unsigned int fll_fref;
-	unsigned int fll_fout;
-};
 
 /* for checking wm8994 rev */
 int wm8994_rev = 0;
@@ -301,6 +292,11 @@ int wm8994_write(struct snd_soc_codec *codec, unsigned int reg,
 {
 	u8 data[4];
 	int ret;
+	
+	#ifdef CONFIG_SND_VOODOO
+		value = voodoo_hook_wm8994_write(codec, reg, value);
+	#endif
+	
 	//BUG_ON(reg > WM8993_MAX_REGISTER);
 	if(wm8994_debug_on) // For Debugging wm8994 setting
 		printk(KERN_ERR "[WM8994] wm8994_write : reg (0x%x) - val (0x%x)\n", reg, value);
@@ -447,6 +443,10 @@ static const char *idle_mode[] = { "Off", "ON" };
 
 static int set_registers(struct snd_soc_codec *codec, int mode)
 {
+
+	struct wm8994_priv *wm8994 = codec->private_data;
+ 	int val = 0;
+	
 	printk("%s() \n", __func__);	
 
 	wm8994_prev_path = wm8994_curr_path;
@@ -459,6 +459,17 @@ static int set_registers(struct snd_soc_codec *codec, int mode)
 		audio_power(1); /* Board Specific function */
 		wm8994_power = 1;
 	}
+	
+	wm8994->cur_path = mode;
+	wm8994->power_state = CODEC_ON;
+	
+	if (wm8994->codec_state & CALL_ACTIVE) {
+		wm8994->codec_state &= ~(CALL_ACTIVE);
+		val = wm8994_read(codec, WM8994_CLOCKING_1);
+		val &= ~(WM8994_DSP_FS2CLK_ENA_MASK | WM8994_SYSCLK_SRC_MASK);
+		wm8994_write(codec, WM8994_CLOCKING_1, val);
+	}
+	
 
 	if ( (wm8994_idle_mode == IDLE_POWER_DOWN_MODE_OFF) && (wm8994_power == 1) ) {
 		ret = wm8994_change_path(codec, mode, wm8994_prev_path);
@@ -504,12 +515,15 @@ static int wm8994_get_path(struct snd_kcontrol *kcontrol,
 static int wm8994_set_path(struct snd_kcontrol *kcontrol,
         struct snd_ctl_elem_value *ucontrol)
 {
-        struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
+	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
+	int path_num = ucontrol->value.integer.value[0];
+	int val;
 	int i = 0, new_path;
+
 	/* To remove audio noise by low clk when path changed, set the dvfs level to maximum */
-#ifdef CONFIG_CPU_FREQ
-	set_dvfs_perf_level();
-#endif
+	#ifdef CONFIG_CPU_FREQ
+		set_dvfs_perf_level();
+	#endif
 
 	
 	while(audio_path[i] != NULL) {
@@ -1313,6 +1327,11 @@ static int wm8994_i2c_probe(struct i2c_client *i2c,
 	codec->control_data = i2c;
 
 	ret = wm8994_init(socdev);
+	
+	#ifdef CONFIG_SND_VOODOO
+		voodoo_hook_wm8994_pcm_probe(codec);
+	#endif
+	
 	if (ret < 0)
 		dev_err(&i2c->dev, "failed to initialise WM8994\n");
 	return ret;
