@@ -1,3 +1,17 @@
 /********************** Astrum Kernel **********************\
 
 Astrum Kernel is a new Kernel for Samsung Galaxy 3, designed to squeeze as much as possible from this phone.
+
+Features:
+
+ADB Root
+Busybox
+Custom Initramfs:
+	Filesystems support
+	init.d support
+	Custom mount options
+	Toggleable compcache
+	Filesystem convertion
+	
+
+	
