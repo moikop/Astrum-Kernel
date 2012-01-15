@@ -67,5 +67,11 @@ config SEC_HEADSET
 	default n
 	help
 	 Provides support for detecting SEC 2 wire devices, such as wired headset.
+	 
+config S5P_HIGH_RES_TIMERS_HZ
+	int "HZ"
+	default "256"
+	help
+		Kernel HRTimer HZ.
 
 endmenu
