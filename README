@@ -6,6 +6,9 @@ Features:
 
 ADB Root
 Busybox
+Click bug during call fixed
+1% Battery Mod
+Voodoo Sound Driver v10
 Custom Initramfs:
 	Filesystems support
 	init.d support

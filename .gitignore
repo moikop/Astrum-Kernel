@@ -12,8 +12,8 @@
 Module.symvers
 *.ko
 initramfs*.cpio
-
+*.cmd.o
 
 
 !.config
-!.config.old
+.config.old
