@@ -2,16 +2,6 @@ if BLOCK
 
 menu "IO Schedulers"
 
-config IOSCHED_NOOP
-	bool
-	default y
-	---help---
-	  The no-op I/O scheduler is a minimal scheduler that does basic merging
-	  and sorting. Its main uses include non-disk based block devices like
-	  memory devices, and specialised software or hardware environments
-	  that do their own scheduling and require only minimal assistance from
-	  the kernel.
-
 config IOSCHED_AS
 	tristate "Anticipatory I/O scheduler"
 	default y
@@ -39,6 +29,16 @@ config IOSCHED_CFQ
 	  among all processes in the system. It should provide a fair
 	  working environment, suitable for desktop systems.
 	  This is the default I/O scheduler.
+	  
+config IOSCHED_NOOP
+	tristate "No-op I/O Scheduler"
+	default y
+	---help---
+	  The no-op I/O scheduler is a minimal scheduler that does basic merging
+	  and sorting. Its main uses include non-disk based block devices like
+	  memory devices, and specialised software or hardware environments
+	  that do their own scheduling and require only minimal assistance from
+	  the kernel.
 
 choice
 	prompt "Default I/O scheduler"
@@ -57,7 +57,7 @@ choice
 		bool "CFQ" if IOSCHED_CFQ=y
 
 	config DEFAULT_NOOP
-		bool "No-op"
+		bool "No-op" if IOSCHED_NOOP=y
 
 endchoice
 
