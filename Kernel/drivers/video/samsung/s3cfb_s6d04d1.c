@@ -978,7 +978,11 @@ void s3cfb_display_logo(struct fb_info *fbinfo)
 
 static int progress = 0;
 
+#ifdef CONFIG_FB_S3C_PROGRESS_BAR
+	static int progress_flag = ON;
+#else 
 static int progress_flag = OFF;
+#endif
 
 static struct timer_list progress_timer;
 
@@ -989,7 +993,7 @@ static int (*releasefb)(struct fb_info *) = NULL;
 
 static void progress_timer_handler(unsigned long data)
 {
-#if 0
+#ifdef CONFIG_FB_S3C_PROGRESS_BAR
 	struct fb_info *fbinfo;
 	unsigned short *bar_src, *bar_dst;	
 	int	i, j, p;
@@ -999,7 +1003,7 @@ static void progress_timer_handler(unsigned long data)
 	fbinfo = fb_ctrl->fb[PROGRESS_WIN_NUM];
 		
 	/* 1 * 8 R5G5B5 BMP (Aligned 4 Bytes) */
-	bar_dst = (unsigned short *)(fbinfo->screen_base + (((240 * 347) + 31) * 2));
+	bar_dst = (unsigned short *)(fbinfo->screen_base + (((240 * 325) + 31) * 2));
 	bar_src = (unsigned short *)(progress_bar + sizeof(progress_bar) - 4);
 
 	for (i = 0; i < 8; i++) {
@@ -1024,7 +1028,7 @@ static void progress_timer_handler(unsigned long data)
 
 void s3cfb_restart_progress()
 {
-#if 0
+#ifdef CONFIG_FB_S3C_PROGRESS_BAR
 	struct fb_info *fbinfo;
 	unsigned short *bg_src, *bg_dst;	
 	unsigned short *bar_src, *bar_dst;	
@@ -1040,7 +1044,7 @@ void s3cfb_restart_progress()
 	del_timer(&progress_timer);
 
 	/* 240 * 19 R5G5B5 BMP */
-	bg_dst = (unsigned short *)(fbinfo->screen_base + ((240 * 342) * 2));
+	bg_dst = (unsigned short *)(fbinfo->screen_base + ((240 * 320) * 2));
 	bg_src = (unsigned short *)(progress_bg + sizeof(progress_bg) - 2);
 
 	for (i = 0; i < 19; i++) {
@@ -1070,7 +1074,7 @@ static unsigned int old_vidosd1c;
 
 void s3cfb_start_progress(struct s3cfb_global* ctrl, int (*func_allocfb)(struct fb_info *), int (*func_releasefb)(struct fb_info *))
 {
-#if 0
+#ifdef CONFIG_FB_S3C_PROGRESS_BAR
 	struct fb_info *fbinfo = ctrl->fb[PROGRESS_WIN_NUM];
 	unsigned short *bg_src, *bg_dst;	
 	unsigned int data;
@@ -1085,7 +1089,7 @@ void s3cfb_start_progress(struct s3cfb_global* ctrl, int (*func_allocfb)(struct 
 	memset(fbinfo->screen_base, 0x00, LOGO_MEM_SIZE);	
 
 	/* 240 * 19 R5G5B5 BMP */
-	bg_dst = (unsigned short *)(fbinfo->screen_base + ((240 * 342) * 2));
+	bg_dst = (unsigned short *)(fbinfo->screen_base + ((240 * 320) * 2));
 	bg_src = (unsigned short *)(progress_bg + sizeof(progress_bg) - 2);
 
 	for (i = 0; i < 19; i++) {
@@ -1128,7 +1132,7 @@ void s3cfb_start_progress(struct s3cfb_global* ctrl, int (*func_allocfb)(struct 
 
 void s3cfb_stop_progress(void)
 {
-#if 0
+#ifdef CONFIG_FB_S3C_PROGRESS_BAR
 	if (progress_flag == OFF)
 		return;
 

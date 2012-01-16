@@ -103,3 +103,10 @@ config FB_S3C_BPP_32
 	---help---
 	TBA
 endchoice
+
+config FB_S3C_PROGRESS_BAR
+	depends on FB_S3C
+	bool "Enable Kernel's Progress Bar"
+	default n
+	---help---
+		This will enable the progress bar that's shown right after the kernel is loaded.

@@ -109,8 +109,7 @@ static int s3cfb_draw_logo(struct fb_info *fb)
 #if 1	//sm.kim: copy logo from bootloader's framebuffer
 	s3cfb_display_logo(fbdev->fb[pdata->default_win]);
 #else
-	memcpy(fbdev->fb[pdata->default_win]->screen_base,
-		LOGO_RGB16, fix->line_length * var->yres);
+	memcpy(fbdev->fb[pdata->default_win]->screen_base, LOGO_RGB16, fix->line_length * var->yres);
 #endif
 
 	return 0;
