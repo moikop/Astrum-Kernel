@@ -104,6 +104,13 @@ config FB_S3C_BPP_32
 	TBA
 endchoice
 
+config FB_S3C_USE_BOOTLOADER_LOGO
+	depends on FB_S3C
+	bool "Use Bootloader's logo for Kernel"
+	default y
+	---help---
+		This option allows you to decide whether you want to use a custom bootlogo or the Bootloader's one for Kernel bootup"
+
 config FB_S3C_PROGRESS_BAR
 	depends on FB_S3C
 	bool "Enable Kernel's Progress Bar"
