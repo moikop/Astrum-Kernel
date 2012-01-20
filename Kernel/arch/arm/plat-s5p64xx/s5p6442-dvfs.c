@@ -37,14 +37,14 @@ static spinlock_t dvfs_lock;
 
 static struct cpufreq_frequency_table freq_table_666_166MHz[] = {
 		{0, 917*KHZ_T},
-		{0, 833*KHZ_T},
-		{1, 750*KHZ_T},
-        {2, 667*KHZ_T},
-        {3, 333*KHZ_T},
-        {4, 222*KHZ_T},
-        {5, 166*KHZ_T},
-        {6, 83*KHZ_T},
-        {7, CPUFREQ_TABLE_END},
+		{1, 833*KHZ_T},
+		{2, 750*KHZ_T},
+        {3, 667*KHZ_T},
+        {4, 333*KHZ_T},
+        {5, 222*KHZ_T},
+        {6, 166*KHZ_T},
+        {7, 83*KHZ_T},
+        {8, CPUFREQ_TABLE_END},
 };
 
 static unsigned char transition_state_666_166MHz[][2] = {
