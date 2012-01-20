@@ -27,21 +27,22 @@
 #include <linux/io.h>
 #include <plat/map.h>
 
-unsigned int S5P6442_MAXFREQLEVEL = 5;
-unsigned int S5P6442_MAXFREQLEVEL_ONLYCPU = 5;
+unsigned int S5P6442_MAXFREQLEVEL = 6;
+unsigned int S5P6442_MAXFREQLEVEL_ONLYCPU = 6;
 static unsigned int s5p6442_cpufreq_level = 0;
-unsigned int s5p6442_cpufreq_index = 5;
+unsigned int s5p6442_cpufreq_index = 6;
 static spinlock_t dvfs_lock;
  
 #define CLIP_LEVEL(a, b) (a > b ? b : a)
 
 static struct cpufreq_frequency_table freq_table_666_166MHz[] = {
-        {0, 667*KHZ_T},
-        {1, 333*KHZ_T},
-        {2, 222*KHZ_T},
-        {3, 166*KHZ_T},
-        {4, 83*KHZ_T},
-        {5, CPUFREQ_TABLE_END},
+		{0, 750*KHZ_T},
+        {1, 667*KHZ_T},
+        {2, 333*KHZ_T},
+        {3, 222*KHZ_T},
+        {4, 166*KHZ_T},
+        {5, 83*KHZ_T},
+        {6, CPUFREQ_TABLE_END},
 };
 
 static unsigned char transition_state_666_166MHz[][2] = {
@@ -49,17 +50,19 @@ static unsigned char transition_state_666_166MHz[][2] = {
         {2, 1},
         {3, 2},
         {4, 3},
+        {5, 4},
         {3, 1},
 };
 
 /* frequency voltage matching table */
 unsigned int frequency_match_666_166MHz[][4] = {
 /* frequency, Mathced VDD ARM voltage , Matched VDD INT*/
-        {667000, 1200, 1200, 0},
-        {333000, 1200, 1200, 1},
-        {222000, 1200, 1200, 2},
-        {166000, 1150, 1150, 3},
-        {83000,  1100, 1100, 4},
+		{750000, 1225, 1225, 0},
+        {667000, 1200, 1200, 1},
+        {333000, 1200, 1200, 2},
+        {222000, 1200, 1200, 3},
+        {166000, 1150, 1150, 4},
+        {83000,  1100, 1100, 5},
 }; 
 
 extern int is_pmic_initialized(void);
