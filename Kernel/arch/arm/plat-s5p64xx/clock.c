@@ -38,113 +38,42 @@
 
 #define INIT_XTAL			12 * MHZ
 
-#if 0
-static const u32 s3c_cpu_clock_table[][3] = {
-	{532*MHZ, (0<<ARM_DIV_RATIO_BIT), (3<<HCLK_DIV_RATIO_BIT)},
-	{266*MHZ, (1<<ARM_DIV_RATIO_BIT), (1<<HCLK_DIV_RATIO_BIT)},
-	{133*MHZ, (3<<ARM_DIV_RATIO_BIT), (0<<HCLK_DIV_RATIO_BIT)},
-	//{APLL, DIVarm, DIVhclk}	
-};
-#endif
-
-#ifndef MUXD0D1_A2M
 /* ARMCLK, D0CLK, P0CLK, D1CLK, P1CLK, APLL_RATIO, D0CLK_RATIO, P0CLK_RATIO, D1CLK_RATIO, P1CLK_RATIO */
-static const u32 s5p_cpu_clk_tab_533MHz[][10] = {
-	{533*MHZ, 133*MHZ, (133*MHZ)/2, 133*MHZ, (133*MHZ)/2, 0, 0, 1, 0, 1},
-	{(533*MHZ)/2, 133*MHZ, (133*MHZ)/2, 133*MHZ, (133*MHZ)/2, 1, 0, 1, 0, 1},
-	{(533*MHZ)/3, 133*MHZ, (133*MHZ)/2, 133*MHZ, (133*MHZ)/2, 2, 0, 1, 0, 1},
-	{(533*MHZ)/4, 133*MHZ, (133*MHZ)/2, 133*MHZ, (133*MHZ)/2, 3, 0, 1, 0, 1},
-#ifdef SYSCLK_CHANGE
-#ifdef USE_DVFS_AL1_LEVEL
-	{(533*MHZ)/4, (133*MHZ), (133*MHZ)/2, 133*MHZ/2, (133*MHZ)/2, 3, 0, 1, 1, 0},
-#endif /* USE_DVFS_AL1_LEVEL */
-	{(533*MHZ)/8, (133*MHZ)/2, (133*MHZ)/2, 133*MHZ/2, (133*MHZ)/2, 7, 1, 0, 1, 0},
-#endif /* SYSCLK_CHANGE */
-};
-#else
-/* ARMCLK, D0CLK, P0CLK, D1CLK, A2M_RATIO, APLL_RATIO, D0CLK_RATIO, P0CLK_RATIO, D1CLK_RATIO, P1CLK_RATIO */
-static const u32 s5p_cpu_clk_tab_533MHz[][10] = {
-	{533*MHZ, 		133*MHZ, 	(133*MHZ)/2, 	133*MHZ, 	3, 0, 0, 1, 0, 1},
-	{(533*MHZ)/2, 	133*MHZ, 	(133*MHZ)/2, 	133*MHZ, 	3, 1, 0, 1, 0, 1},
-	{(533*MHZ)/3, 	133*MHZ, 	(133*MHZ)/2, 	133*MHZ, 	3, 2, 0, 1, 0, 1},
-	{(533*MHZ)/4, 	133*MHZ, 	(133*MHZ)/2, 	133*MHZ, 	3, 3, 0, 1, 0, 1},
-#ifdef SYSCLK_CHANGE
-#ifdef USE_DVFS_AL1_LEVEL
-	{(533*MHZ)/4, 	(133*MHZ)/2, (133*MHZ)/2, 	(133*MHZ)/2, 7, 3, 0, 0, 0, 0},
-#endif /* USE_DVFS_AL1_LEVEL */
-	{(533*MHZ)/8,	 (133*MHZ)/2, (133*MHZ)/2, 	(133*MHZ)/2, 7, 7, 0, 0, 0, 0},
-#endif /* SYSCLK_CHANGE */
-};
-#endif /* MUXD0D1_A2M */
-#if 0
-/* ARMCLK, D0CLK, P0CLK, D1CLK, P1CLK, APLL_RATIO, A2M_RATIO, REFRESH_RATE, UART_DIV, RESERVED */
-static const u32 s5p_cpu_clk_tab_666MHz[][10] = {
-	{667*MHZ,     166*MHZ, (166*MHZ)/2, 166*MHZ, (166*MHZ)/2, 	  0, 3, AVG_PRD_REFRESH_INTERVAL_166MHZ, 0x2C, 1},
-	{(667*MHZ)/2, 166*MHZ, (166*MHZ)/2, 166*MHZ, (166*MHZ)/2,         1, 3, AVG_PRD_REFRESH_INTERVAL_166MHZ, 0x2C, 1},
-//	{(667*MHZ)/2, 133*MHZ, (133*MHZ)/2, 133*MHZ, (133*MHZ)/2, 	  1, 4, AVG_PRD_REFRESH_INTERVAL_133MHZ, 0x23, 1},
-	{(667*MHZ)/4, 133*MHZ, (133*MHZ)/2, 133*MHZ, (133*MHZ)/2, 	  3, 4, AVG_PRD_REFRESH_INTERVAL_133MHZ, 0x23, 1},
-#ifdef SYSCLK_CHANGE
-	{(667*MHZ)/4, (166*MHZ)/2, (166*MHZ)/4, (166*MHZ)/2, (166*MHZ)/4, 3, 7, AVG_PRD_REFRESH_INTERVAL_83MHZ, 0x16, 1},
-        {(667*MHZ)/8, (166*MHZ)/2, (166*MHZ)/4, (166*MHZ)/2, (166*MHZ)/4, 7, 7, AVG_PRD_REFRESH_INTERVAL_83MHZ, 0x16, 1},
-//	{(667*MHZ)/4, (166*MHZ)/2, (166*MHZ)/2, (166*MHZ)/2, (166*MHZ)/2, 3, 7, AVG_PRD_REFRESH_INTERVAL_83MHZ, 0x2C, 0},
-//        {(667*MHZ)/8, (166*MHZ)/2, (166*MHZ)/2, (166*MHZ)/2, (166*MHZ)/2, 7, 7, AVG_PRD_REFRESH_INTERVAL_83MHZ, 0x2C, 0},
-//	{(667*MHZ)/4, (133*MHZ)/2, (133*MHZ)/2, (133*MHZ)/2, (133*MHZ)/2, 3, 9, AVG_PRD_REFRESH_INTERVAL_66MHZ, 0x23, 0},
-//      {(667*MHZ)/8, (133*MHZ)/2, (133*MHZ)/2, (133*MHZ)/2, (133*MHZ)/2, 7, 9, AVG_PRD_REFRESH_INTERVAL_66MHZ, 0x23, 0},
-//	{(667*MHZ)/4, (133*MHZ)/2, (133*MHZ)/4, (133*MHZ)/2, (133*MHZ)/4, 3, 9, AVG_PRD_REFRESH_INTERVAL_66MHZ, 0x12, 1},
-//	{(667*MHZ)/8, (133*MHZ)/2, (133*MHZ)/4, (133*MHZ)/2, (133*MHZ)/4, 7, 9, AVG_PRD_REFRESH_INTERVAL_66MHZ, 0x12, 1},
-#endif /* SYSCLK_CHANGE */
-};
-#else
-/* ARMCLK, D0CLK, P0CLK, //D1CLK, P1CLK, // APLL_RATIO, D0CLK_RATIO, P0CLK_RATIO, D1CLK_RATIO, P1CLK_RATIO, REFRESH_RATE, UART_DIV, RESERVED */
-static const u32 s5p_cpu_clk_tab_666MHz[][10] = {
-        {667*MHZ,     166*MHZ, (166*MHZ)/2, /*133*MHZ, (133*MHZ)/2,*/ 0, 3, 1, 4, 1, AVG_PRD_REFRESH_INTERVAL_166MHZ, 0x23},
-        {(667*MHZ)/2, 166*MHZ, (166*MHZ)/2, /*133*MHZ, (133*MHZ)/2,*/ 1, 3, 1, 4, 1, AVG_PRD_REFRESH_INTERVAL_166MHZ, 0x23},
-//	{(667*MHZ)/3, 133*MHZ, (133*MHZ)/2, /*133*MHZ, (133*MHZ)/2,*/ 2, 3, 1, 3, 1, AVG_PRD_REFRESH_INTERVAL_166MHZ, 0x2C},
-//	{(667*MHZ)/4, 133*MHZ, (133*MHZ)/2, /*133*MHZ, (133*MHZ)/2,*/ 3, 3, 1, 3, 1, AVG_PRD_REFRESH_INTERVAL_166MHZ, 0x2C},
-        {(667*MHZ)/3, 133*MHZ, (133*MHZ)/2, /*133*MHZ, (133*MHZ)/2,*/ 2, 4, 1, 4, 1, AVG_PRD_REFRESH_INTERVAL_133MHZ, 0x23},
-        {(667*MHZ)/4, 133*MHZ, (133*MHZ)/2, /*133*MHZ, (133*MHZ)/2,*/ 3, 4, 1, 4, 1, AVG_PRD_REFRESH_INTERVAL_133MHZ, 0x23},
-#ifdef SYSCLK_CHANGE
-//	{(667*MHZ)/4, (133*MHZ)/2, (133*MHZ)/2, /*133*MHZ, (133*MHZ)/2,*/ 3, 7, 0, 7, 0, AVG_PRD_REFRESH_INTERVAL_83MHZ, 0x2C},
-//      {(667*MHZ)/8, (133*MHZ)/2, (133*MHZ)/2,   /*133*MHZ, (133*MHZ)/2,*/ 7, 7, 0, 7, 0, AVG_PRD_REFRESH_INTERVAL_83MHZ, 0x2C},
-	{(667*MHZ)/4, (133*MHZ)/2, (133*MHZ)/2, /*133*MHZ, (133*MHZ)/2,*/ 3, 9, 0, 9, 0, AVG_PRD_REFRESH_INTERVAL_66MHZ, 0x23},
-        {(667*MHZ)/8, (133*MHZ)/2, (133*MHZ)/2,   /*133*MHZ, (133*MHZ)/2,*/ 7, 9, 0, 9, 0, AVG_PRD_REFRESH_INTERVAL_66MHZ, 0x23},
-#endif /* SYSCLK_CHANGE */
+static  u32 s5p_cpu_clk_tab_666_166MHz[][10] = {
+        {667*MHZ, 166*MHZ, (166*MHZ)/2, 166*MHZ, (166*MHZ)/2, 0, 0, 1, 0, 1},
+        {333*MHZ, 166*MHZ, (166*MHZ)/2, 166*MHZ, (166*MHZ)/2, 0, 0, 1, 0, 1},
+        {222*MHZ, 166*MHZ, (166*MHZ)/2, 166*MHZ, (166*MHZ)/2, 0, 0, 1, 0, 1},
+        {166*MHZ, 166*MHZ, (166*MHZ)/2, 166*MHZ, (166*MHZ)/2, 0, 0, 1, 0, 1},
+	{83*MHZ, 166*MHZ, (166*MHZ)/2, 166*MHZ, (166*MHZ)/2, 0, 1, 0, 1, 0}, 
 };
 
-#endif
-/* ARMCLK, D0CLK, P0CLK, D1CLK, P1CLK, APLL_RATIO, D0CLK_RATIO, P0CLK_RATIO, D1CLK_RATIO, P1CLK_RATIO */
-static const u32 s5p_cpu_clk_tab_666_166MHz[][10] = {
-        {667*MHZ,         166*MHZ, (166*MHZ)/2, 166*MHZ, (166*MHZ)/2, 0, 0, 1, 0, 1},
-        {(667*MHZ)/2, 166*MHZ, (166*MHZ)/2, 166*MHZ, (166*MHZ)/2, 1, 0, 1, 0, 1},
-        {(667*MHZ)/3, 166*MHZ, (166*MHZ)/2, 166*MHZ, (166*MHZ)/2, 2, 0, 1, 0, 1},
-        {(667*MHZ)/4, 166*MHZ, (166*MHZ)/2, 166*MHZ, (166*MHZ)/2, 3, 0, 1, 0, 1},
-#ifdef SYSCLK_CHANGE
-#ifdef USE_DVFS_AL1_LEVEL
-        {(667*MHZ)/4, (166*MHZ)/2, (166*MHZ)/2, 166*MHZ/2, (166*MHZ)/2, 3, 1, 0, 1, 0},
-#endif /* USE_DVFS_AL1_LEVEL */
-	{(667*MHZ)/8, (166*MHZ)/2, (166*MHZ)/2, 166*MHZ/2, (166*MHZ)/2, 7, 1, 0, 1, 0},   
-#endif /* SYSCLK_CHANGE */
+u32 s5p_cpu_pll_tab[][4] = {
+// A P L L                                 M P L L                                   E P L L                                     V P L L
+{((1 << 31) | (667 << 16) | (6 << 8) | 1), ((1 << 31) | (333 << 16) | (3 << 8) | 3), ((1 << 31) | (0x82d << 16) | (1 << 8) | 3), ((1 << 31) | (108 << 16) | (3 << 8) | 3)},  
+{((1 << 31) | (333 << 16) | (6 << 8) | 1), ((1 << 31) | (333 << 16) | (3 << 8) | 3), ((1 << 31) | (0x82d << 16) | (1 << 8) | 3), ((1 << 31) | (108 << 16) | (3 << 8) | 3)},
+{((1 << 31) | (222 << 16) | (6 << 8) | 1), ((1 << 31) | (333 << 16) | (3 << 8) | 3), ((1 << 31) | (0x82d << 16) | (1 << 8) | 3), ((1 << 31) | (108 << 16) | (3 << 8) | 3)},
+{((1 << 31) | (166 << 16) | (6 << 8) | 1), ((1 << 31) | (333 << 16) | (3 << 8) | 3), ((1 << 31) | (0x82d << 16) | (1 << 8) | 3), ((1 << 31) | (108 << 16) | (3 << 8) | 3)},
+{((1 << 31) | (83 << 16) | (6 << 8) | 1), ((1 << 31) | (333 << 16) | (3 << 8) | 3), ((1 << 31) | (0x82d << 16) | (1 << 8) | 3), ((1 << 31) | (108 << 16) | (3 << 8) | 3)},
+};
+
+static u32 s5p_cpu_clkdiv_tab[][3] = {
+{0x10100000, 0x00000000, 0x00000000},
+{0x10100000, 0x00000000, 0x00000000},
+{0x10100000, 0x00000000, 0x00000000},
+{0x10100000, 0x00000000, 0x00000000},
+{0x10100000, 0x00000000, 0x00000000},
 };
 
 #define GET_DIV(clk, field) ((((clk) & field##_MASK) >> field##_SHIFT) + 1)
 
-static const u32 s5p_avg_prd_refresh_rate[6] = { AVG_PRD_REFRESH_INTERVAL_133MHZ, AVG_PRD_REFRESH_INTERVAL_66MHZ, AVG_PRD_REFRESH_INTERVAL_133MHZ,
-						AVG_PRD_REFRESH_INTERVAL_66MHZ, AVG_PRD_REFRESH_INTERVAL_166MHZ, AVG_PRD_REFRESH_INTERVAL_83MHZ, };
+static const u32 s5p_avg_prd_refresh_rate[2] = { AVG_PRD_REFRESH_INTERVAL_166MHZ, AVG_PRD_REFRESH_INTERVAL_83MHZ, };
 unsigned int S5P6442_FREQ_TAB = 0;
 
-static const u32 (*s5p_cpu_clk_tab[3])[10] = {
-	s5p_cpu_clk_tab_533MHz,
-	s5p_cpu_clk_tab_666MHz,
-	s5p_cpu_clk_tab_666_166MHz,
-} ;
 
 static u32 s5p_cpu_clk_tab_size(void)
 {
 	u32 size;
-	if(S5P6442_FREQ_TAB)
-		size = ARRAY_SIZE(s5p_cpu_clk_tab_666MHz);
-	else
-		size = ARRAY_SIZE(s5p_cpu_clk_tab_533MHz);
+	size = ARRAY_SIZE(s5p_cpu_clk_tab_666_166MHz);
 
 	return size;
 }
@@ -167,83 +96,26 @@ unsigned long s5p_fclk_round_rate(struct clk *clk, unsigned long rate)
 {
 	u32 iter;
 	u32 size;
-	static const u32 (*cpu_clk_tab)[6];
+	static const u32 (*cpu_clk_tab)[1];
 
-	cpu_clk_tab = s5p_cpu_clk_tab[S5P6442_FREQ_TAB];
+	//cpu_clk_tab = s5p_cpu_clk_tab[S5P6442_FREQ_TAB];
 
 	size = s5p_cpu_clk_tab_size();
 
 	for(iter = 1 ; iter < size ; iter++) {
-		if(rate > s5p_cpu_clk_tab[S5P6442_FREQ_TAB][iter][0])
-			return s5p_cpu_clk_tab[S5P6442_FREQ_TAB][iter-1][0];
+		if(rate > s5p_cpu_clk_tab_666_166MHz[iter][0])
+			return s5p_cpu_clk_tab_666_166MHz[iter-1][0];
 	}
 
-	return s5p_cpu_clk_tab[S5P6442_FREQ_TAB][iter - 1][0];
-}
-
-int s5p6442_get_index(void)
-{
-	unsigned long clk_div0;
-	unsigned long armClkRatio;
-	unsigned int d0ClkRatio;	
-	unsigned int d1ClkRatio;
-	unsigned int p0ClkRatio;	
-	unsigned int p1ClkRatio;
-	unsigned int a2MClkRatio;
-	int index = 0;
-	u32 size;
-	u32 (*cpu_clk_tab)[10];
-
-	cpu_clk_tab = s5p_cpu_clk_tab[S5P6442_FREQ_TAB];
-
-	clk_div0 = __raw_readl(S5P_CLK_DIV0);
-	if(S5P6442_FREQ_TAB == 1){
-		
-	armClkRatio = GET_DIV(clk_div0, S5P_CLKDIV0_APLL)- 1;
-        d0ClkRatio = GET_DIV(clk_div0, S5P_CLKDIV0_D0CLK) - 1;
-        d1ClkRatio = GET_DIV(clk_div0, S5P_CLKDIV0_D1CLK) - 1;
-	p0ClkRatio = GET_DIV(clk_div0, S5P_CLKDIV0_P0CLK) - 1;
-        p1ClkRatio = GET_DIV(clk_div0, S5P_CLKDIV0_P1CLK) - 1;
-	size = s5p_cpu_clk_tab_size();
-	 for(index = 0 ; index < size ; index++) {
-                if((cpu_clk_tab[index][3]== armClkRatio)&&
-			(cpu_clk_tab[index][4] == d0ClkRatio) &&
-                           (cpu_clk_tab[index][5] == p0ClkRatio) &&
-                           (cpu_clk_tab[index][6] == d1ClkRatio) &&
-                           (cpu_clk_tab[index][7] == p1ClkRatio)){
-			
-			return index;
-		}
-	   }	
-	}
-	else {
-	armClkRatio = GET_DIV(clk_div0, S5P_CLKDIV0_APLL)- 1;
-	d0ClkRatio = GET_DIV(clk_div0, S5P_CLKDIV0_D0CLK) - 1;
-	d1ClkRatio = GET_DIV(clk_div0, S5P_CLKDIV0_D1CLK) - 1;
-	p0ClkRatio = GET_DIV(clk_div0, S5P_CLKDIV0_P0CLK) - 1;
-        p1ClkRatio = GET_DIV(clk_div0, S5P_CLKDIV0_P1CLK) - 1;
-
-	size = s5p_cpu_clk_tab_size();
-	for(index = 0 ; index < size ; index++) {
-		if(cpu_clk_tab[index][5]== armClkRatio) {
-			if((cpu_clk_tab[index][6] == d0ClkRatio) &&
-			   (cpu_clk_tab[index][7] == p0ClkRatio) &&
-			   (cpu_clk_tab[index][8] == d1ClkRatio) &&
-			   (cpu_clk_tab[index][9] == p1ClkRatio))
-				return index;
-		}
-	}
-	}
-
-	return -1;
+	return s5p_cpu_clk_tab_666_166MHz[iter - 1][0];
 }
 
 #ifdef CONFIG_CPU_FREQ
 int s5p6442_clk_set_rate(unsigned int target_freq,
                                 unsigned int index )
 {
+	int pll_change = 0;
 	int cur_freq;
-	int cur_idx;
 	unsigned int mask;
 	u32 clk_div0;
 	u32 size;
@@ -251,86 +123,28 @@ int s5p6442_clk_set_rate(unsigned int target_freq,
 	static int flag = 0;
         static unsigned int hd0_clk;
         static unsigned int hd1_clk;
-        static unsigned int arm_clk;
-	static const u32 (*cpu_clk_tab)[10];
+        static unsigned int arm_clk, clk_tmp;
+	static  u32 (*cpu_clk_tab)[10];
+	static int cur_idx;
 
 	if (!flag){
 		hd0_clk = clk_hd0.rate;
 		hd1_clk = clk_hd1.rate;
 		arm_clk = clk_f.rate;
+		cur_idx = 3;
 		flag = 1;
 	}
 
-	cpu_clk_tab = s5p_cpu_clk_tab[S5P6442_FREQ_TAB];
+	cpu_clk_tab = s5p_cpu_clk_tab_666_166MHz;
 
 	size = s5p_cpu_clk_tab_size();
 
-	if(index >= size) {
+	if(index >= size) 
 		return 1;
-	}
 	
-	cur_idx = s5p6442_get_index();
-	if(cur_idx < 0) {
-		printk("%s: cpu_clk_tab: problem!!!!!\n", __func__);
-		return 1;
-	}
-
-	if(cur_idx == index)
+	if (index == cur_idx)
 		return 0;
-
-	if(S5P6442_FREQ_TAB == 1){
-		
-		if(cur_idx > index){ // incresing frequency
-
-		__raw_writel(cpu_clk_tab[index][8], S5P_DRAMC_TIMINGAREF);
-//		__raw_writel(cpu_clk_tab[index][9], S3C24XX_VA_UART1 + S3C2410_UBRDIV);
-
-		 mask = (~S5P_CLKDIV0_APLL_MASK) & (~S5P_CLKDIV0_D0CLK_MASK) & (~S5P_CLKDIV0_P0CLK_MASK) & (~S5P_CLKDIV0_D1CLK_MASK) & (~S5P_CLKDIV0_P1CLK_MASK);
-                clk_div0 = __raw_readl(S5P_CLK_DIV0) & mask;
-                clk_div0 |= cpu_clk_tab[index][3] << S5P_CLKDIV0_APLL_SHIFT;
-		clk_div0 |= (cpu_clk_tab[index][4]) << S5P_CLKDIV0_D0CLK_SHIFT;
-		clk_div0 |= (cpu_clk_tab[index][5]) << S5P_CLKDIV0_P0CLK_SHIFT;
-		clk_div0 |= (cpu_clk_tab[index][6]) << S5P_CLKDIV0_D1CLK_SHIFT;
-                clk_div0 |= (cpu_clk_tab[index][7]) << S5P_CLKDIV0_P1CLK_SHIFT;
-		s5p6442_changeDivider(clk_div0, S5P_CLK_DIV0);
 	
-		}
-		else{
-		
-		mask = (~S5P_CLKDIV0_APLL_MASK) & (~S5P_CLKDIV0_D0CLK_MASK) & (~S5P_CLKDIV0_P0CLK_MASK) & (~S5P_CLKDIV0_D1CLK_MASK) & (~S5P_CLKDIV0_P1CLK_MASK);
-                clk_div0 = __raw_readl(S5P_CLK_DIV0) & mask;
-		clk_div0 |= cpu_clk_tab[index][3] << S5P_CLKDIV0_APLL_SHIFT;
-                clk_div0 |= (cpu_clk_tab[index][4]) << S5P_CLKDIV0_D0CLK_SHIFT;
-                clk_div0 |= (cpu_clk_tab[index][5]) << S5P_CLKDIV0_P0CLK_SHIFT;
-                clk_div0 |= (cpu_clk_tab[index][6]) << S5P_CLKDIV0_D1CLK_SHIFT;
-                clk_div0 |= (cpu_clk_tab[index][7]) << S5P_CLKDIV0_P1CLK_SHIFT;
-                s5p6442_changeDivider(clk_div0, S5P_CLK_DIV0);
-	
-		 __raw_writel(cpu_clk_tab[index][8], S5P_DRAMC_TIMINGAREF);
-  //               __raw_writel(cpu_clk_tab[index][9], S3C24XX_VA_UART1 + S3C2410_UBRDIV);
-
-		}
-		
-		while(__raw_readl(S5P_CLK_DIV_STAT0) && (timeout > 0)){
-			timeout--;
-			udelay(10);
-		}	
-
-#if 1
-        clk_f.rate = arm_clk / (cpu_clk_tab[index][3] + 1);
-        clk_hd0.rate = (arm_clk / (cpu_clk_tab[index][4] + 1));
-        clk_hd1.rate = (arm_clk / (cpu_clk_tab[index][6] + 1));
-	clk_pd0.rate = clk_hd0.rate/ (cpu_clk_tab[index][5] + 1);
-	clk_pd1.rate = clk_hd1.rate/ (cpu_clk_tab[index][7] + 1);; 
-
-        /* For backward compatibility */
-        clk_h.rate = clk_hd1.rate;
-        clk_p.rate = clk_pd1.rate;	
-//	printk("#####arm_clk %d hd0_clk %d p0_clk %d hd1_clk %d p1_clk %d clkdiv0  %x timeout %d\n", clk_f.rate, clk_hd0.rate, clk_pd0.rate,
-//						clk_hd1.rate, clk_pd1.rate, clk_div0, timeout);
-#endif
-	}
-	else{	
 	if(cpu_clk_tab[index][6] > 0)
 		__raw_writel(s5p_avg_prd_refresh_rate[S5P6442_FREQ_TAB * 2 + 1], S5P_DRAMC_TIMINGAREF);
 	
@@ -347,29 +161,70 @@ int s5p6442_clk_set_rate(unsigned int target_freq,
 	clk_div0 |= (cpu_clk_tab[index][4] << S5P_CLKDIV0_A2M_SHIFT);		
 #endif /* MUXD0D1_A2M */
 
-	s5p6442_changeDivider(clk_div0, S5P_CLK_DIV0);
-	
+
+	if (index > cur_idx) {
+		clk_tmp = __raw_readl(S5P_APLL_CON);
+		if (clk_tmp != s5p_cpu_pll_tab[index][0]) {
+		    pll_change = 1;
+		  __raw_writel(0xe10, S5P_APLL_LOCK);
+		  __raw_writel(s5p_cpu_pll_tab[index][0],S5P_APLL_CON);
+		}
+
+		clk_tmp = __raw_readl(S5P_MPLL_CON);
+		if (clk_tmp != s5p_cpu_pll_tab[index][1]) {
+		    pll_change = 1;
+		    __raw_writel(0xe10, S5P_MPLL_LOCK);
+		    __raw_writel(s5p_cpu_pll_tab[index][1],S5P_MPLL_CON);
+		}
+
+		s5p6442_changeDivider(clk_div0, S5P_CLK_DIV0);
+	}
+	else
+	{
+		s5p6442_changeDivider(clk_div0, S5P_CLK_DIV0);
+		clk_tmp = __raw_readl(S5P_APLL_CON);
+		if (clk_tmp != s5p_cpu_pll_tab[index][0]) {
+		    pll_change = 1;
+		  __raw_writel(0xe10, S5P_APLL_LOCK);
+		  __raw_writel(s5p_cpu_pll_tab[index][0],S5P_APLL_CON);
+		}
+
+		clk_tmp = __raw_readl(S5P_MPLL_CON);
+		if (clk_tmp != s5p_cpu_pll_tab[index][1]) {
+		    pll_change = 1;
+		   __raw_writel(0xe10, S5P_MPLL_LOCK);
+                   __raw_writel(s5p_cpu_pll_tab[index][1],S5P_MPLL_CON);
+		}
+	}
+
+
+	__raw_writel(0x00001111, S5P_CLK_SRC0);
+
+	arm_clk = s5p_fclk_get_rate();
 	if(cpu_clk_tab[index][6] == 0)
 		__raw_writel(s5p_avg_prd_refresh_rate[S5P6442_FREQ_TAB * 2], S5P_DRAMC_TIMINGAREF);
 
 	while(__raw_readl(S5P_CLK_DIV_STAT0) && (timeout > 0)){
-                        timeout--;
-                        udelay(10);
+	                timeout--;
+	                udelay(10);
 	}
-#if 1
-        clk_f.rate = arm_clk / (cpu_clk_tab[index][5] + 1);
-        clk_hd0.rate = (hd0_clk / (cpu_clk_tab[index][6] + 1));
-        clk_hd1.rate = (hd1_clk / (cpu_clk_tab[index][8] + 1));
-        clk_pd0.rate = clk_hd0.rate/ (cpu_clk_tab[index][7] + 1);
-        clk_pd1.rate = clk_hd1.rate/ (cpu_clk_tab[index][9] + 1);
+
+	if (pll_change == 1) {
+		s5p_cpu_pll_tab[index][0] = __raw_readl(S5P_APLL_CON);
+		s5p_cpu_pll_tab[index][1] = __raw_readl(S5P_MPLL_CON);
+	}
+
+	clk_f.rate = arm_clk / (cpu_clk_tab[index][5] + 1);
+	clk_hd0.rate = (hd0_clk / (cpu_clk_tab[index][6] + 1));
+	clk_hd1.rate = (hd1_clk / (cpu_clk_tab[index][8] + 1));
+	clk_pd0.rate = clk_hd0.rate/ (cpu_clk_tab[index][7] + 1);
+	clk_pd1.rate = clk_hd1.rate/ (cpu_clk_tab[index][9] + 1);
 
 	/* For backward compatibility */
-        clk_h.rate = clk_hd1.rate;
-        clk_p.rate = clk_pd1.rate;
- //     printk("#####arm_clk %d hd0_clk %d p0_clk %d hd1_clk %d p1_clk %d clkdiv0  %x timeout %d\n", clk_f.rate, clk_hd0.rate, clk_pd0.rate,
-//                                              clk_hd1.rate, clk_pd1.rate, clk_div0, timeout);
-#endif
-	}
+	clk_h.rate = clk_hd1.rate;
+	clk_p.rate = clk_pd1.rate;
+	cur_idx = index;
+
 	return 0;
 }
 #endif /* CONFIG_CPU_FREQ */

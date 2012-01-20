@@ -29,6 +29,18 @@
 #include <linux/completion.h>
 #include <linux/mutex.h>
 
+#define USE_FAKE_SHMOO
+
+#ifdef USE_FAKE_SHMOO
+#include <plat/s5p6442-dvfs.h>
+int *FakeShmoo_UV_mV_Ptr; // Stored voltage table from cpufreq sysfs
+//extern NvRmCpuShmoo fake_CpuShmoo;  // Stored faked CpuShmoo values
+//extern NvRmDfs *fakeShmoo_Dfs;
+extern unsigned int frequency_match_666_166MHz[][4];
+extern u32 s5p_cpu_pll_tab[][4];
+
+#endif // USE_FAKE_SHMOO
+
 #define dprintk(msg...) cpufreq_debug_printk(CPUFREQ_DEBUG_CORE, \
 						"cpufreq-core", msg)
 
@@ -647,6 +659,100 @@ static ssize_t show_scaling_setspeed(struct cpufreq_policy *policy, char *buf)
 	return policy->governor->show_setspeed(policy, buf);
 }
 
+#ifdef USE_FAKE_SHMOO
+static ssize_t show_cpu_temp(struct cpufreq_policy *policy, char *buf)
+{
+/*
+	int pTemp = 0;
+
+	if( fakeShmoo_Dfs != NULL )
+	{
+		NvRmDtt* pDtt = &fakeShmoo_Dfs->ThermalThrottler;
+		NvOdmTmonTemperatureGet(pDtt->hOdmTcore, &pTemp);
+	}
+	return sprintf(buf, "%i\n",  pTemp);
+*/
+}
+
+static ssize_t show_frequency_voltage_table(struct cpufreq_policy *policy, char *buf)
+{
+	int i;
+	char *table = buf;
+
+	for( i=0; i<5; i++ )
+	{
+		table += sprintf(table, "%d %d %d\n", frequency_match_666_166MHz[i][0], frequency_match_666_166MHz[i][1], frequency_match_666_166MHz[i][1] - FakeShmoo_UV_mV_Ptr[i] );
+	}
+	return table - buf;
+}
+
+static ssize_t show_UV_mV_table(struct cpufreq_policy *policy, char *buf)
+{
+	int i;
+	char *table = buf;
+
+	for( i=0; i<5; i++ )
+	{
+		table += sprintf(table, "%d ", FakeShmoo_UV_mV_Ptr[i] );
+	}
+	table += sprintf(table, "\n" );
+	return table - buf;
+}
+
+static ssize_t store_UV_mV_table(struct cpufreq_policy *policy, const char *buf, size_t count)
+{
+	int ret = sscanf( buf, "%i %i %i %i %i", &FakeShmoo_UV_mV_Ptr[0], &FakeShmoo_UV_mV_Ptr[1], &FakeShmoo_UV_mV_Ptr[2], &FakeShmoo_UV_mV_Ptr[3], &FakeShmoo_UV_mV_Ptr[4]);
+	printk("---> voltage store : 0=%d 1=%d 2=%d 3=%d 4=%d\n", FakeShmoo_UV_mV_Ptr[0], FakeShmoo_UV_mV_Ptr[1], FakeShmoo_UV_mV_Ptr[2], FakeShmoo_UV_mV_Ptr[3], FakeShmoo_UV_mV_Ptr[4]);
+	printk("---> voltage : index = %d\n", s5p6442_cpufreq_index);
+	printk("---> set voltage!\n");
+	ret = set_voltage(s5p6442_cpufreq_index, true);
+	printk("---> set voltage : ret=%d\n", ret);
+	if (ret != 0)
+		return -EINVAL;
+	return count;
+}
+
+static ssize_t show_plls_table(struct cpufreq_policy *policy, char *buf)
+{
+	int i;
+	char *table = buf;
+	table = sprintf(table, "index - apll - mpll\n%d %x %x %x %x\n", s5p6442_cpufreq_index, s5p_cpu_pll_tab[s5p6442_cpufreq_index][0], s5p_cpu_pll_tab[s5p6442_cpufreq_index][1]);
+
+	return table - buf;
+}
+
+static ssize_t store_plls_table(struct cpufreq_policy *policy, const char *buf, size_t count)
+{
+    int index= 0;
+    u32 apll;
+    u32 mpll;
+
+    printk("---> voltage store pll : in store_plls_table\n");
+
+	int ret = sscanf( buf, "%i %x %x %x %x", &index, &apll,&mpll);
+
+	//if (ret != 1)
+	//	return -EINVAL;
+    printk("---> ret = %d\n",ret);
+
+    printk("---> voltage store pll : index=%d apll=%x mpll=%x epll=%x vpll=%x\n", index, apll, mpll );
+
+    if (apll != 0)
+        s5p_cpu_pll_tab[index][0] = apll;
+    if (mpll != 0)
+        s5p_cpu_pll_tab[index][1] = mpll;
+
+    printk("---> voltage store pll : index=%d apll=%x mpll=%x\n", index, s5p_cpu_pll_tab[index][0],s5p_cpu_pll_tab[index][1] );
+
+    printk("---> voltage store pll - call s5p6442_clk_set_rate\n");
+    s5p6442_clk_set_rate(0,index);
+
+	return 0;
+}
+
+
+#endif //USE_FAKE_SHMOD
+
 #define define_one_ro(_name) \
 static struct freq_attr _name = \
 __ATTR(_name, 0444, show_##_name, NULL)
@@ -672,6 +778,12 @@ define_one_rw(scaling_min_freq);
 define_one_rw(scaling_max_freq);
 define_one_rw(scaling_governor);
 define_one_rw(scaling_setspeed);
+#ifdef USE_FAKE_SHMOO
+define_one_ro(cpu_temp);
+define_one_ro(frequency_voltage_table);
+define_one_rw(UV_mV_table);
+define_one_rw(plls_table);
+#endif // USE_FAKE_SHMOO
 
 static struct attribute *default_attrs[] = {
 	&cpuinfo_min_freq.attr,
@@ -685,6 +797,12 @@ static struct attribute *default_attrs[] = {
 	&scaling_driver.attr,
 	&scaling_available_governors.attr,
 	&scaling_setspeed.attr,
+#ifdef USE_FAKE_SHMOO
+	&cpu_temp.attr,
+	&frequency_voltage_table.attr,
+	&UV_mV_table.attr,
+    &plls_table.attr,
+#endif // USE_FAKE_SHMOO
 	NULL
 };
 
@@ -1065,6 +1183,7 @@ err_out_unregister:
 
 err_unlock_policy:
 	unlock_policy_rwsem_write(cpu);
+	free_cpumask_var(policy->related_cpus);
 err_free_cpumask:
 	free_cpumask_var(policy->cpus);
 err_free_policy:
@@ -1683,7 +1802,7 @@ EXPORT_SYMBOL(cpufreq_get_policy);
  * @policy: struct cpufreq_policy into which the current cpufreq_policy is written
  *
  * Writes appropriate cpufreq policy per request.
- * 
+ *
  */
 int cpufreq_set_policy(unsigned int cpu, const char *buf)
 {
@@ -1723,7 +1842,7 @@ EXPORT_SYMBOL(cpufreq_set_policy);
  * &policy : struct cpufreq_policy into which the current cpufreq_policy is written
  *
  * Writes appropriate cpufreq policy per request.
- * 
+ *
  */
 char cpufreq_governor_name[CPUFREQ_NAME_LEN];
 void cpufreq_get_cpufreq_name(unsigned int cpu)
@@ -2031,6 +2150,11 @@ EXPORT_SYMBOL_GPL(cpufreq_unregister_driver);
 static int __init cpufreq_core_init(void)
 {
 	int cpu;
+
+#ifdef USE_FAKE_SHMOO
+	// Allocate some memory for the voltage tab
+	FakeShmoo_UV_mV_Ptr = kzalloc(sizeof(int)*(8), GFP_KERNEL);
+#endif // USE_FAKE_SHMOO
 
 	for_each_possible_cpu(cpu) {
 		per_cpu(policy_cpu, cpu) = -1;
