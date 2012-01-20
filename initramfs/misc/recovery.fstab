@@ -1,8 +1,9 @@
 # mount fstype  device                  [device2]   [fstype2]   [fsoptions]         [fsoptions2]
 
-/boot	bml	boot	NULL	NULL	NULL	NULL
-/cache	ext2	/dev/block/stl8	NULL	NULL	NULL	NULL
-/data	ext4	/dev/block/stl7	NULL	NULL	NULL	NULL
+
 /system	ext2	/dev/block/stl6	NULL	NULL	NULL	NULL
+/data	ext4	/dev/block/stl7	NULL	NULL	NULL	NULL
+/cache	ext2	/dev/block/stl8	NULL	NULL	NULL	NULL
 /sdcard	vfat	/dev/block/mmcblk0p1	NULL	NULL	NULL	NULL
 /sd-ext ext4    /dev/block/mmcblk0p2	NULL	NULL	NULL	NULL
+/boot	bml	boot	NULL	NULL	NULL	NULL

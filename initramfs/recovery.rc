@@ -257,6 +257,11 @@ on boot
     chmod 0777 /data/situation.txt
     chmod 0777 /data/stream_headset.txt
     chmod 0777 /data/stream_speaker.txt
+    
+#RZRecovery
+	copy /sbin/ui_commands.sh /ui_commands.sh
+	chmod 0777 /ui_commands.sh
+	
 #bootsnd
 	setprop	audioflinger.bootsnd 1
 
