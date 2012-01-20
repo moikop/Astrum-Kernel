@@ -2,6 +2,8 @@
 
 Astrum Kernel is a new Kernel for Samsung Galaxy 3, designed to squeeze as much as possible from this phone.
 
+Current Version: Alpha Centauri (A1)
+
 Features:
 
 ADB Root
@@ -9,6 +11,12 @@ Busybox
 Click bug during call fixed
 1% Battery Mod
 Voodoo Sound Driver v10
+Overclock up to 917Mhz
+Lagfree CPU governor
+Simple I/O Scheduler
+Up to 5 touchpoints
+Bootload bar
+
 Custom Initramfs:
 	Filesystems support
 	init.d support
