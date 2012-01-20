@@ -36,6 +36,8 @@ loglevel 9
     mkdir /tmp
     mount tmpfs nodev /tmp
     
+    
+    mkdir /sdcard
     symlink /mnt/sdcard /sdcard
     
     insmod /lib/modules/fsr.ko
@@ -100,7 +102,7 @@ loglevel 9
     #mount ext2 /dev/block/stl6 /system check=no
     #mount yaffs2 mtd@system /system ro remount
     
-stl6_mount
+#stl6_mount
 
 # use movinand second partition as /data. d.moskvitin
     exec apply_disk_policy

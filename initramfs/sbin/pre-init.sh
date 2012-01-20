@@ -405,7 +405,8 @@ else
 	set_mount_options
 fi
 
-rm -rf /etc
+#rm -rf /etc
+
 sync
 cd /
 
