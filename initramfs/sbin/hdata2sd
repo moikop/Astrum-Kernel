@@ -1,0 +1,58 @@
+#!/system/bin/sh
+# Hybrid Data2SD for init.d for Fugumod and other ROMs without internal HD2SD
+#
+
+mkdir /data/misc
+mkdir /data/misc/hd2sd/
+LOG="/data/misc/hd2sd/hd2sd.log"
+
+rm $LOG
+
+
+if test -f /data2sd.log
+then
+	echo "HD2SD for init.d launched but not needed" >> $LOG
+else
+	echo "OH NO! A kernel without HD2SD! I'll make do without!" >> $LOG
+	mount -o rw,remount -t rootfs rootfs /
+
+	echo "Cleaning up symlinks" >> $LOG
+	cd /data/
+	for x in *
+		do if [ -L $x ]
+		then
+			echo "/data/$x is a symlink" >> $LOG
+			rm /data/$x
+			mkdir /data/$x
+		fi
+	done
+	cd /
+		
+	if test -e /dev/block/mmcblk0p2; then
+		mkdir /intdata
+		mkdir /sdext
+		mount -t astrum_d2sd_stl7 -o noatime,nodiratime,nosuid,nodev,rw /dev/block/stl7 /intdata >> $LOG
+
+		mount -t astrum_d2sd_sdext -o noatime,nodiratime,nosuid,nodev,rw /dev/block/mmcblk0p2 /sdext >> $LOG
+
+		if test -f /system/etc/data2sd.dirs
+		then
+			tr -d '\r' < /system/etc/data2sd.dirs > /data/misc/hd2sd/data2sd.dirs
+			echo "Mounting Hybrid Data2SD" >> $LOG
+			cat /data/misc/hd2sd/data2sd.dirs | while read line
+			do
+				DATA2SDtemp="$line"
+				mkdir /sdext/$DATA2SDtemp
+				cp -rf /intdata/$DATA2SDtemp /sdext/
+				rm -r /intdata/$DATA2SDtemp
+				ln -s /sdext/$DATA2SDtemp /data/$DATA2SDtemp
+				echo "/data/$DATA2SDtemp - /sdext/$DATA2SDtemp" >> $LOG
+			done
+			chmod 777 /sdext
+			chmod 777 /sdext/*
+			chmod 777 /sdext/app/*
+		else
+			echo "No Data2SD config file found at /system/etc/data2sd.dirs" >> $LOG
+		fi
+	fi
+fi

@@ -9,10 +9,7 @@ export PATH=/sbin:/system/bin:/system/xbin
 exec >>/res/user.log
 exec 2>&1
 
-chmod 777 /sdext/app
-
 mkdir /system/sd
-mount -o bind /sdext /system/sd
 
 # continue with playing the logo
 exec /system/bin/playlogo&
@@ -20,6 +17,13 @@ exec /system/bin/playlogo&
 /sbin/busybox mount -o remount,rw /
 if ! test -d /system/etc/init.d ; then
 	mkdir /system/etc/init.d
+fi
+
+#if /system/etc/data2sd.dirs is there, execute Hillbeast's Data2SD script
+if test -f /system/etc/data2sd.dirs; then
+	echo "Starting Data2SD" >> /astrum.log
+	chmod 777 /sbin/hdata2sd
+	/system/bin/sh /sbin/hdata2sd
 fi
 
 # init.d support

@@ -431,6 +431,19 @@ else
 
 fi
 
+if [ -e "$ADIR/data2sd.dirs" ]; then
+	echo "Data2SD Enabled" >> $ALOG
+	#Let's copy user's data2sd config to /system/etc
+	mount /dev/block/stl6 /system
+	cp "$ADIR/data2sd.dirs" "/system/etc/data2sd.dirs"
+	#And now, change fs type in the script
+	sed -i "s|astrum_d2sd_stl7|${STL7_FS}|" /sbin/hdata2sd
+	sed -i "s|astrum_d2sd_sdext|${MMC_FS}|" /sbin/hdata2sd
+	umount /system
+else
+	echo "Data2SD Disabled"
+fi
+
 # Inline inject mountpoints
 sed -i "s|stl6_mount|mount ${STL6_FS} /dev/block/stl6 /system nodev noatime nodiratime ro ${STL6_MNT}|" /init.rc
 sed -i "s|stl6_mount|mount ${STL6_FS} /dev/block/stl6 /system nodev noatime nodiratime rw ${STL6_MNT}|" /recovery.rc
