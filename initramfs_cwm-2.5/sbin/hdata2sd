@@ -51,6 +51,15 @@ else
 			chmod 777 /sdext
 			chmod 777 /sdext/*
 			chmod 777 /sdext/app/*
+			
+			#symbolic link for titanium sd-ext
+			if test -L /sd-ext
+			then 
+				echo "symbolic link SD-EXT already there" >> $LOG
+			else 
+				ln -s /sdext /sd-ext
+				echo "symbolic link SD-EXT has been created" >> $LOG
+			fi
 		else
 			echo "No Data2SD config file found at /system/etc/data2sd.dirs" >> $LOG
 		fi
