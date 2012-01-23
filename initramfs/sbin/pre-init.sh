@@ -444,6 +444,11 @@ else
 	echo "Data2SD Disabled"
 fi
 
+sed -i "s|stl6_type|${STL6_FS}|" /misc/recovery.fstab
+sed -i "s|stl7_type|${STL7_FS}|" /misc/recovery.fstab
+sed -i "s|stl8_type|${STL8_FS}|" /misc/recovery.fstab
+sed -i "s|mmc_type|${MMC_FS}|" /misc/recovery.fstab
+
 # Inline inject mountpoints
 sed -i "s|stl6_mount|mount ${STL6_FS} /dev/block/stl6 /system nodev noatime nodiratime ro ${STL6_MNT}|" /init.rc
 sed -i "s|stl6_mount|mount ${STL6_FS} /dev/block/stl6 /system nodev noatime nodiratime rw ${STL6_MNT}|" /recovery.rc
