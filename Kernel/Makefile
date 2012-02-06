@@ -349,6 +349,10 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -march=armv6 \
 		   -mfpu=vfp \
 		   -mcpu=arm1176jzf-s \
+		   -mfpu=vfp \
+		   -mfloat-abi=hard \
+		   -funsafe-math-optimizations \
+		   -ffast-math \
 		   -mno-unaligned-access
 KBUILD_AFLAGS   := -D__ASSEMBLY__
 

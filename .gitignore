@@ -13,6 +13,7 @@ Module.symvers
 *.ko
 initramfs*.cpio
 *.cmd.o
+build.sh
 
 
 !.config
