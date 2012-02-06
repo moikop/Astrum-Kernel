@@ -603,7 +603,7 @@ service immvibed /system/bin/immvibed
 	oneshot
 	
 # to enable wifi
-service wpa_supplicant /system/bin/wpa_supplicant -Dwext -ieth0 -c /data/wifi/bcm_supp.conf
+service wpa_supplicant /system/bin/wpa_supplicant -Dwext -ieth0 -c/data/wifi/bcm_supp.conf
     disabled
     oneshot
 

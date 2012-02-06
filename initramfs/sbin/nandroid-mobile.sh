@@ -1,6 +1,6 @@
 #!/sbin/sh
 source /ui_commands.sh
-#export PATH=/sbin:$PATH
+export PATH=/sbin:$PATH
 SUBNAME=""
 NOBOOT=0
 NODATA=0
@@ -30,6 +30,8 @@ ASSUMEDEFAULTUSERINPUT=0
 data_mounted=`mount | grep "/data" | wc -l`
 system_mounted=`mount | grep "/system" | wc -l`
 cache_mounted=`mount | grep "/cache" | wc -l`
+
+mount -a
 
 quit()
 {
@@ -64,8 +66,9 @@ batteryAtLeast()
 	
 	
 	if [ "$action" != "continue" ]; then
-	  echo "* print Error: not enough battery power, need at least $REQUIREDLEVEL%."
-	  echo "* print Connect charger or USB power and try again."
+	  echo "* print Error: not enough battery power."
+	  echo "* print Need at least $REQUIREDLEVEL%."
+	  echo "* print Connect charger and try again."
 	  quit 101
 	fi
     fi
@@ -615,7 +618,7 @@ if [ "$BACKUP" == 1 ]; then
    mount /data 
    mount $ROOT_BACKUPDEVICE 2> /dev/null 
    mkdir /data/data
-   mount $DD_DEVICE /data/data 2>/dev/null
+   #mount $DD_DEVICE /data/data 2>/dev/null
    mount $EXT_DEVICE /sd-ext 2>/dev/null
    if [ ! "$SUBNAME" == "" ]; then
      SUBNAME=$SUBNAME-
@@ -648,7 +651,7 @@ if [ "$BACKUP" == 1 ]; then
     TIMESTAMP="`date +%Y%m%d-%H%M`"
     
     if [ -e /system/build.prop ]; then
-      VERSION=`cat /system/build.prop | grep ro.build.display.id | cut -d '=' -f2 | sed 's/ /_/g;s/(/-/g;s/)/-/g'`
+      VERSION=`cat /system/build.prop | grep ro.product.device | cut -d '=' -f2 | sed 's/ /_/g;s/(/-/g;s/)/-/g'`
       if [ ! -z "$VERSION" ]; then
         SUBNAME="$VERSION"-"$SUBNAME"
       fi 
@@ -829,19 +832,13 @@ if [ "$BACKUP" == 1 ]; then
 	sync
     done
 
-    echo "* print Unmounting..."
-			umount /system 2>/dev/null
-			umount /data 2>/dev/null
-			umount /data/data
-			TOTALSIZE=`du -sm $DESTDIR | awk '{print$1}'`
-			umount $ROOT_BACKUPDEVICE 2>/dev/null
-			umount /boot 2>/dev/null
+	TOTALSIZE=`du -sm $DESTDIR | awk '{print$1}'`
+			
     echo "* print Backup successful."
     B_END=`date +%s`
     ELAPSED_SECS=$(( $B_END - $B_START ))
     [ "$PROGRESS" == "1" ] && echo "* reset_progress"
     echo "* print Backup operation took $ELAPSED_SECS seconds."
     echo "* print Total size of backup: $TOTALSIZE MB."
-    echo "* print Thanks for using RZRecovery."
     quit 0
 fi
