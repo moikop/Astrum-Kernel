@@ -31,7 +31,7 @@ extern u32 s5p_cpu_clk_tab_overclock[][10];
 extern void s5p6442_preclock(void);
 extern void s5p6442_postclock(void);
 
-extern u32 s5p_cpu_pll_tab[][4];
+extern u32 s5p_cpu_pll_tab[];
 
 #define KHZ_T		1000
 
