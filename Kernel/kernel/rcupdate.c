@@ -53,7 +53,7 @@ struct lockdep_map rcu_lock_map =
 EXPORT_SYMBOL_GPL(rcu_lock_map);
 #endif
 
-int rcu_scheduler_active __read_mostly;
+//int rcu_scheduler_active __read_mostly;
 
 /*
  * Awaken the corresponding synchronize_rcu() instance now that a
@@ -66,6 +66,7 @@ void wakeme_after_rcu(struct rcu_head  *head)
 	rcu = container_of(head, struct rcu_synchronize, head);
 	complete(&rcu->completion);
 }
+#ifndef CONFIG_TINY_RCU
 
 #ifdef CONFIG_TREE_PREEMPT_RCU
 
@@ -157,6 +158,8 @@ void synchronize_rcu_bh(void)
 }
 EXPORT_SYMBOL_GPL(synchronize_rcu_bh);
 
+#endif /* #ifndef CONFIG_TINY_RCU */
+
 static int __cpuinit rcu_barrier_cpu_hotplug(struct notifier_block *self,
 		unsigned long action, void *hcpu)
 {
@@ -179,9 +182,11 @@ void __init rcu_init(void)
 		rcu_barrier_cpu_hotplug(NULL, CPU_UP_PREPARE, (void *)(long)i);
 }
 
+#ifndef CONFIG_TINY_RCU
 void rcu_scheduler_starting(void)
 {
 	WARN_ON(num_online_cpus() != 1);
 	WARN_ON(nr_context_switches() > 0);
 	rcu_scheduler_active = 1;
 }
+#endif
