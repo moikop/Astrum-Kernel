@@ -17,13 +17,13 @@
 #include "wm8994_voodoo.h"
 
 #ifndef MODULE
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 35) && !defined(GALAXY_TAB)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 35)
 #include "wm8994_samsung.h"
 #else
 #include "wm8994.h"
 #endif
 #else
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 35) && !defined(GALAXY_TAB)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 35)
 #include "../wm8994_samsung.h"
 #else
 #include "../wm8994.h"
@@ -79,9 +79,7 @@ bool enable = false;
 
 bool dac_osr128 = true;
 bool adc_osr128 = false;
-#ifndef GALAXY_TAB_TEGRA
 bool fll_tuning = true;
-#endif
 bool dac_direct = true;
 bool mono_downmix = false;
 
@@ -483,15 +481,14 @@ bool is_path(int unified_path)
 
 	// headphones
 	case HEADPHONES:
-/*
+
 #ifdef NEXUS_S
-		return (wm8994->cur_path == HP
-			|| wm8994->cur_path == HP_NO_MIC);
+		return (wm8994->cur_path == HP);
 #else
 #ifdef GALAXY_TAB
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 35)
-		return (wm8994->cur_path == HP
-			|| wm8994->cur_path == HP_NO_MIC);
+    return (wm8994->cur_path == HP
+      || wm8994->cur_path == HP_NO_MIC);
 #else
 		return (wm8994->cur_path == HP3P
 			|| wm8994->cur_path == HP4P
@@ -499,29 +496,26 @@ bool is_path(int unified_path)
 #endif
 #else
 #ifdef M110S
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 35)
-		return (wm8994->cur_path == HP
-			|| wm8994->cur_path == HP_NO_MIC);
-#else
 		return (wm8994->cur_path == HP);
-#endif
 #else
 #ifdef GALAXY_TAB_TEGRA
-		return (wm8994->cur_path == HP
-			|| wm8994->cur_path == HP_NO_MIC);
+    return (wm8994->cur_path == HP
+      || wm8994->cur_path == HP_NO_MIC);
 #else
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 35)
 		return (wm8994->cur_path == HP
-			|| wm8994->cur_path == HP_NO_MIC
-			|| wm8994->fmradio_path == FMR_HP);
-#else*/
+#ifndef M110S
+			|| wm8994->fmradio_path == FMR_HP
+#endif
+			);
+#else
 		return (wm8994->cur_path == HP
 			|| wm8994->fmradio_path == FMR_HP);
-//#endif
-//#endif
-//#endif
-//#endif
-//#endif
+#endif
+#endif
+#endif
+#endif
+#endif
 
 	// FM Radio on headphones
 	case RADIO_HEADPHONES:
@@ -532,7 +526,7 @@ bool is_path(int unified_path)
 		return false;
 #else
 #ifdef GALAXY_TAB_TEGRA
-		return false;
+    return false;
 #else
 #ifdef GALAXY_TAB
 		return false;

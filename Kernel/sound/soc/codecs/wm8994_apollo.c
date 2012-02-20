@@ -8,17 +8,14 @@
 #include <plat/regs-clock.h>
 #include <mach/apollo.h>
 
+//#ifdef CONFIG_SND_VOODOO
+#include "wm8994_voodoo.h"
+//#endif
 
-#ifdef CONFIG_SND_VOODOO
-	#include "wm8994_voodoo.h"
-	#include "wm8994.h"
-#else
-	#include "wm8994_def.h"
-#endif
-
+#include "wm8994.h"
 #include "wm8994_gain.h"
 
-//#define DAC_TO_DIRECT_HPOUT1 // when playback headset, DAC1 directly connected to HPOUT1 mixer (not passed through MIXOUTL R)
+#define DAC_TO_DIRECT_HPOUT1 // when playback headset, DAC1 directly connected to HPOUT1 mixer (not passed through MIXOUTL R)
 #define VOICE_PCM_IF
 #define FM_PATH_DRC_BLOCK
 

@@ -38,12 +38,10 @@
 #include <mach/apollo.h>
 
 #ifdef CONFIG_SND_VOODOO
-	#include "wm8994_voodoo.h"
-	#include "wm8994.h"
-#else
-	#include "wm8994_def.h"
+#include "wm8994_voodoo.h"
 #endif
 
+#include "wm8994.h"
 #include "wm8994_gain.h"
 
 #include <linux/timer.h>
